@@ -1,29 +1,100 @@
 <!DOCTYPE html>
-<html lang="de" class="bg-background text-text">
+<html lang="de" data-theme="dark" class="bg-background text-text">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>{% block title %}Automation{% endblock %}</title>
   <link rel="stylesheet" href="/static/css/output.css">
+  <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+  <style>
+    [data-theme="dark"] { --color-background: #001b2e; --color-surface: #294c60; --color-surface-light: #3a6580; --color-border: #3a6580; --color-text: #ffefd3; --color-text-muted: #adb6c4; }
+    [data-theme="light"] { --color-background: #ffefd3; --color-surface: #ffffff; --color-surface-light: #f8f8f8; --color-border: #e2e8f0; --color-text: #001b2e; --color-text-muted: #64748b; }
+    .sidebar { width: 256px; transition: width 0.2s ease; }
+    .sidebar.collapsed { width: 64px; }
+    .sidebar.collapsed .nav-label { display: none; }
+    .sidebar.collapsed .sidebar-header-text { display: none; }
+    .sidebar.collapsed .sidebar-footer-text { display: none; }
+    .sidebar.collapsed .nav-item { justify-content: center; }
+    .sidebar.collapsed .nav-item i { margin-right: 0; }
+    @media (max-width: 768px) {
+      .sidebar { position: fixed; z-index: 50; transform: translateX(-100%); }
+      .sidebar.open { transform: translateX(0); }
+      .sidebar-overlay { display: none; }
+      .sidebar-overlay.open { display: block; }
+    }
+  </style>
   {% block head %}{% endblock %}
 </head>
-<body class="flex min-h-screen">
+<body class="flex min-h-screen bg-background text-text">
+
+  <!-- Mobile Overlay -->
+  <div class="sidebar-overlay fixed inset-0 bg-black/50 z-40" onclick="toggleSidebar()"></div>
 
   <!-- Sidebar -->
-  <aside class="w-64 border-r border-border p-4 flex flex-col gap-1 shrink-0">
-    <div class="text-sm font-medium mb-4 px-2">{% block sidebar_header %}⚡ automation{% endblock %}</div>
-    <nav class="flex flex-col gap-0.5 flex-1">
+  <aside class="sidebar bg-surface border-r border-border flex flex-col shrink-0 h-screen sticky top-0">
+    <div class="flex items-center justify-between p-4 border-b border-border">
+      <div class="flex items-center gap-2">
+        <i data-lucide="zap" class="w-5 h-5 text-accent"></i>
+        <span class="sidebar-header-text text-sm font-medium">{% block sidebar_header %}automation{% endblock %}</span>
+      </div>
+      <button onclick="toggleSidebar()" class="text-text-muted hover:text-text p-1 rounded">
+        <i data-lucide="panel-left-close" class="w-4 h-4"></i>
+      </button>
+    </div>
+    <nav class="flex flex-col gap-1 p-2 flex-1">
       {% block nav_items %}{% endblock %}
     </nav>
-    <div class="text-xs text-text-muted px-2 mt-auto pt-4 border-t border-border">
-      {% block sidebar_footer %}{% endblock %}
+    <div class="p-4 border-t border-border">
+      <button onclick="toggleTheme()" class="flex items-center gap-2 text-text-muted hover:text-text text-sm w-full p-2 rounded hover:bg-surface-light transition-colors">
+        <i data-lucide="sun" class="w-4 h-4 theme-icon-light"></i>
+        <i data-lucide="moon" class="w-4 h-4 theme-icon-dark"></i>
+        <span class="sidebar-footer-text">Theme</span>
+      </button>
+      <div class="text-xs text-text-muted mt-2 sidebar-footer-text">{% block sidebar_footer %}{% endblock %}</div>
     </div>
   </aside>
 
   <!-- Content -->
-  <main class="flex-1 p-6 max-w-6xl overflow-y-auto">
+  <main class="flex-1 p-6 overflow-y-auto">
     {% block content %}{% endblock %}
   </main>
+
+  <script>
+    function toggleSidebar() {
+      const sidebar = document.querySelector('.sidebar');
+      const overlay = document.querySelector('.sidebar-overlay');
+      sidebar.classList.toggle('collapsed');
+      sidebar.classList.toggle('open');
+      overlay.classList.toggle('open');
+    }
+
+    function toggleTheme() {
+      const html = document.documentElement;
+      const current = html.getAttribute('data-theme');
+      const next = current === 'dark' ? 'light' : 'dark';
+      html.setAttribute('data-theme', next);
+      localStorage.setItem('theme', next);
+      updateThemeIcons();
+    }
+
+    function updateThemeIcons() {
+      const theme = document.documentElement.getAttribute('data-theme');
+      document.querySelectorAll('.theme-icon-light').forEach(el => {
+        el.style.display = theme === 'dark' ? 'block' : 'none';
+      });
+      document.querySelectorAll('.theme-icon-dark').forEach(el => {
+        el.style.display = theme === 'light' ? 'block' : 'none';
+      });
+    }
+
+    // Load saved theme
+    const saved = localStorage.getItem('theme');
+    if (saved) document.documentElement.setAttribute('data-theme', saved);
+    updateThemeIcons();
+
+    // Init Lucide icons
+    lucide.createIcons();
+  </script>
 
   {% block scripts %}{% endblock %}
 </body>

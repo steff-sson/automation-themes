@@ -1,28 +1,88 @@
 {# Shared Jinja2 components for automation-themes #}
-{# Usage: {% from "automation-themes/templates/_components.html" import nav_item, status_dot, section_header, metric_card %} #}
+{# Usage: {% from "_components.html" import nav_item, status_badge, section_header, metric_card, gradient_card %} #}
 
 {%- macro nav_item(href, icon, label, active=false) %}
 <a href="{{ href }}"
-   class="flex items-center gap-2 px-2 py-1.5 rounded-md text-sm
-          {% if active %}bg-surface text-text font-medium
-          {% else %}text-text-muted hover:bg-surface hover:text-text{% endif %}">
-  <span>{{ icon }}</span>
-  <span>{{ label }}</span>
+   class="nav-item flex items-center gap-3 px-3 py-2 rounded-lg text-sm transition-colors
+          {% if active %}bg-surface-light text-accent font-medium
+          {% else %}text-text-muted hover:bg-surface-light hover:text-text{% endif %}">
+  <i data-lucide="{{ icon }}" class="w-4 h-4 shrink-0"></i>
+  <span class="nav-label">{{ label }}</span>
 </a>
 {%- endmacro %}
 
-{%- macro status_dot(color) %}
-<span class="inline-block w-2 h-2 rounded-full" style="background: {{ color }}"></span>
+{%- macro status_badge(status, color=None) %}
+{% set colors = {
+  'success': 'bg-green-500/20 text-green-400',
+  'error': 'bg-red-500/20 text-red-400',
+  'warning': 'bg-yellow-500/20 text-yellow-400',
+  'unknown': 'bg-gray-500/20 text-gray-400',
+  'running': 'bg-blue-500/20 text-blue-400'
+} %}
+{% set color_class = colors[status] if status in colors else (color or 'bg-gray-500/20 text-gray-400') %}
+<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium {{ color_class }}">
+  <span class="w-1.5 h-1.5 rounded-full {% if status == 'success' %}bg-green-400{% elif status == 'error' %}bg-red-400{% elif status == 'warning' %}bg-yellow-400{% elif status == 'running' %}bg-blue-400{% else %}bg-gray-400{% endif %}"></span>
+  {{ status }}
+</span>
 {%- endmacro %}
 
-{%- macro section_header(title) %}
-<h2 class="text-xs font-medium text-text-muted uppercase tracking-wider mb-2 mt-6 first:mt-0">{{ title }}</h2>
+{%- macro section_header(title, icon=None) %}
+<div class="flex items-center gap-2 mb-3 mt-8 first:mt-0">
+  {% if icon %}<i data-lucide="{{ icon }}" class="w-4 h-4 text-accent"></i>{% endif %}
+  <h2 class="text-xs font-semibold text-text-muted uppercase tracking-wider">{{ title }}</h2>
+</div>
 {%- endmacro %}
 
-{%- macro metric_card(label, value, status=None) %}
-<div class="flex items-center justify-between py-1.5 border-b border-border last:border-0">
-  <span class="text-sm text-text-muted">{{ label }}</span>
-  <span class="text-sm text-text">{{ value }}</span>
-  {% if status %}{{ status_dot(status) }}{% endif %}
+{%- macro metric_card(label, value, status=None, icon=None) %}
+<div class="flex items-center justify-between py-2 border-b border-border/50 last:border-0">
+  <div class="flex items-center gap-2">
+    {% if icon %}<i data-lucide="{{ icon }}" class="w-3.5 h-3.5 text-text-muted"></i>{% endif %}
+    <span class="text-sm text-text-muted">{{ label }}</span>
+  </div>
+  <div class="flex items-center gap-2">
+    <span class="text-sm font-medium text-text">{{ value }}</span>
+    {% if status %}{{ status_badge(status) }}{% endif %}
+  </div>
+</div>
+{%- endmacro %}
+
+{%- macro gradient_card(title, description=None, icon=None, gradient="from-charcoal to-prussian", href=None) %}
+<div class="bg-gradient-to-br {{ gradient }} rounded-xl p-5 border border-border/30 relative overflow-hidden">
+  {% if icon %}
+  <div class="w-10 h-10 rounded-lg bg-white/10 flex items-center justify-center mb-3">
+    <i data-lucide="{{ icon }}" class="w-5 h-5 text-text"></i>
+  </div>
+  {% endif %}
+  <h3 class="text-base font-semibold text-text mb-1">{{ title }}</h3>
+  {% if description %}
+  <p class="text-sm text-text-muted leading-relaxed">{{ description }}</p>
+  {% endif %}
+  {% if href %}
+  <a href="{{ href }}" class="inline-flex items-center gap-1 text-sm text-accent mt-3 hover:underline">
+    <span>Mehr erfahren</span>
+    <i data-lucide="arrow-right" class="w-3.5 h-3.5"></i>
+  </a>
+  {% endif %}
+</div>
+{%- endmacro %}
+
+{%- macro stat_card(label, value, change=None, icon=None, gradient="from-charcoal to-prussian") %}
+<div class="bg-gradient-to-br {{ gradient }} rounded-xl p-5 border border-border/30">
+  <div class="flex items-center justify-between mb-2">
+    <span class="text-sm text-text-muted">{{ label }}</span>
+    {% if icon %}<i data-lucide="{{ icon }}" class="w-4 h-4 text-text-muted"></i>{% endif %}
+  </div>
+  <div class="text-2xl font-bold text-text">{{ value }}</div>
+  {% if change %}
+  <div class="flex items-center gap-1 mt-1">
+    {% if change > 0 %}
+    <i data-lucide="trending-up" class="w-3.5 h-3.5 text-green-400"></i>
+    <span class="text-xs text-green-400">+{{ change }}%</span>
+    {% elif change < 0 %}
+    <i data-lucide="trending-down" class="w-3.5 h-3.5 text-red-400"></i>
+    <span class="text-xs text-red-400">{{ change }}%</span>
+    {% endif %}
+  </div>
+  {% endif %}
 </div>
 {%- endmacro %}
