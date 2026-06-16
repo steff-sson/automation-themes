@@ -1,13 +1,13 @@
 # automation-themes
 
 Shared Tailwind theme + Jinja2 components for automation web apps.
-Notion-inspired dark mode — warm, technical, human.
+Bright-only design with warm, technical palette.
 
 ## What's inside
 
-- `css/theme.css` — `@import "tailwindcss"` + `@theme` (warm dark palette)
-- `templates/base.html` — Sidebar-Layout with `{% block nav_items %}` (flexible per app)
-- `templates/_components.html` — Jinja2 macros: `nav_item()`, `status_dot()`, `section_header()`, `metric_card()`
+- `css/theme.css` — `@import "tailwindcss"` + `@theme` (warm bright palette)
+- `templates/base.html` — Sidebar layout with `{% block nav_items %}` (flexible per app)
+- `templates/_components.html` — Jinja2 macros: `nav_item()`, `status_badge()`, `section_header()`
 
 ## Installation
 
@@ -35,21 +35,22 @@ npx @tailwindcss/cli -i static/css/style.css -o static/css/output.css --minify
 
 ```jinja2
 {% extends "automation-themes/templates/base.html" %}
-{% from "automation-themes/templates/_components.html" import nav_item, section_header, status_dot, metric_card %}
+{% from "automation-themes/templates/_components.html" import nav_item, section_header, status_badge %}
 
-{% block sidebar_header %}⚡ livestream-recorder{% endblock %}
+{% block sidebar_header %}automation{% endblock %}
 
 {% block nav_items %}
-  {{ nav_item("/", "📊", "Dashboard", active=true) }}
-  {{ nav_item("/config", "⚙️", "Config") }}
+  {{ nav_item("/", "layout-dashboard", "Dashboard", active=true) }}
+  {{ nav_item("/config", "settings", "Config") }}
 {% endblock %}
 
-{% block sidebar_footer %}livestream-recorder v0.1.0{% endblock %}
+{% block sidebar_footer %}my-app v1.0.0{% endblock %}
 
 {% block content %}
-  {{ section_header("Recording") }}
-  {{ metric_card("Status", "Recording", status="#22c55e") }}
-  {{ metric_card("Duration", "01:23:45") }}
+  {{ section_header("Section Title", "icon-name") }}
+  <div class="bg-white rounded-xl p-6 border border-border shadow-md">
+    Content here
+  </div>
 {% endblock %}
 ```
 
@@ -75,13 +76,22 @@ CMD ["uvicorn", "app:app", "--host", "0.0.0.0", "--port", "8000"]
 
 | Token | Value | Use |
 |-------|-------|-----|
-| `bg` | `#0f0f0f` | Page background |
-| `surface` | `#1a1a1a` | Cards, sidebar, inputs |
-| `glass` | `rgba(26,26,26,0.7)` | Overlays, frosted effects |
-| `border` | `#2a2a2a` | Dividers, subtle borders |
-| `text` | `#e8e8e8` | Primary text |
-| `text-muted` | `#9ca3af` | Secondary text |
-| `accent` | `#3b82f6` | Links, interactive elements |
-| `success` | `#22c55e` | OK status |
-| `error` | `#ef4444` | Error status |
-| `warning` | `#f59e0b` | Warning status |
+| `--color-background` | `#F4F1DE` | Page background (warm cream) |
+| `--color-surface` | `#ffffff` | Cards, sidebar, inputs |
+| `--color-surface-light` | `#f8f6ee` | Hover states, secondary surfaces |
+| `--color-border` | `#e6e0c5` | Dividers, subtle borders |
+| `--color-text` | `#3D405B` | Primary text (dark navy) |
+| `--color-text-muted` | `#7a7d94` | Secondary text |
+| `--color-accent` | `#3D405B` | Links, interactive elements |
+| `--color-orange` | `#E79B85` | Warm accent (nav highlights) |
+| `--color-success` | `#81B29A` | OK status, save buttons |
+| `--color-error` | `#dc2626` | Error status |
+| `--color-warning` | `#f59e0b` | Warning status |
+
+## Nav Items
+
+Use Lucide icons (not emojis). Nav items close sidebar on mobile click.
+
+```jinja2
+{{ nav_item("/path", "icon-name", "Label", active=true) }}
+```
