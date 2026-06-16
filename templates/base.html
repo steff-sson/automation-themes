@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="de" class="bg-bg text-text">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{% block title %}Automation{% endblock %}</title>
+  <link rel="stylesheet" href="/static/css/output.css">
+  {% block head %}{% endblock %}
+</head>
+<body class="flex min-h-screen">
+
+  <!-- Sidebar -->
+  <aside class="w-64 border-r border-border p-4 flex flex-col gap-1 shrink-0">
+    <div class="text-sm font-medium mb-4 px-2">{% block sidebar_header %}⚡ automation{% endblock %}</div>
+    <nav class="flex flex-col gap-0.5 flex-1">
+      {% block nav_items %}{% endblock %}
+    </nav>
+    <div class="text-xs text-text-muted px-2 mt-auto pt-4 border-t border-border">
+      {% block sidebar_footer %}{% endblock %}
+    </div>
+  </aside>
+
+  <!-- Content -->
+  <main class="flex-1 p-6 max-w-6xl overflow-y-auto">
+    {% block content %}{% endblock %}
+  </main>
+
+  {% block scripts %}{% endblock %}
+</body>
+</html>

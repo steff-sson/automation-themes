@@ -1,0 +1,28 @@
+{# Shared Jinja2 components for automation-themes #}
+{# Usage: {% from "automation-themes/templates/_components.html" import nav_item, status_dot, section_header, metric_card %} #}
+
+{%- macro nav_item(href, icon, label, active=false) %}
+<a href="{{ href }}"
+   class="flex items-center gap-2 px-2 py-1.5 rounded-md text-sm
+          {% if active %}bg-surface text-text font-medium
+          {% else %}text-text-muted hover:bg-surface hover:text-text{% endif %}">
+  <span>{{ icon }}</span>
+  <span>{{ label }}</span>
+</a>
+{%- endmacro %}
+
+{%- macro status_dot(color) %}
+<span class="inline-block w-2 h-2 rounded-full" style="background: {{ color }}"></span>
+{%- endmacro %}
+
+{%- macro section_header(title) %}
+<h2 class="text-xs font-medium text-text-muted uppercase tracking-wider mb-2 mt-6 first:mt-0">{{ title }}</h2>
+{%- endmacro %}
+
+{%- macro metric_card(label, value, status=None) %}
+<div class="flex items-center justify-between py-1.5 border-b border-border last:border-0">
+  <span class="text-sm text-text-muted">{{ label }}</span>
+  <span class="text-sm text-text">{{ value }}</span>
+  {% if status %}{{ status_dot(status) }}{% endif %}
+</div>
+{%- endmacro %}
