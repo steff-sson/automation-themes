@@ -3,6 +3,7 @@
 
 {%- macro nav_item(href, icon, label, active=false) %}
 <a href="{{ href }}"
+   onclick="closeSidebar()"
    class="nav-item flex items-center gap-3 px-3 py-2 rounded-lg text-sm transition-colors
           {% if active %}bg-surface-light text-accent font-medium
           {% else %}text-text-muted hover:bg-surface-light hover:text-text{% endif %}">

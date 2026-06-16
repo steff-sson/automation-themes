@@ -7,8 +7,8 @@
   <link rel="stylesheet" href="/static/css/output.css">
   <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
   <style>
-    [data-theme="dark"] { --color-background: #001b2e; --color-surface: #294c60; --color-surface-light: #3a6580; --color-border: #3a6580; --color-text: #ffefd3; --color-text-muted: #adb6c4; }
-    [data-theme="light"] { --color-background: #ffefd3; --color-surface: #ffffff; --color-surface-light: #f8f8f8; --color-border: #e2e8f0; --color-text: #001b2e; --color-text-muted: #64748b; }
+    [data-theme="dark"] { --color-background: #001b2e; --color-surface: #0a2a3f; --color-surface-light: #133a52; --color-border: #1a4a6a; --color-text: #ffefd3; --color-text-muted: #8899aa; --color-accent: #ffc49b; }
+    [data-theme="light"] { --color-background: #f8fafc; --color-surface: #ffffff; --color-surface-light: #f1f5f9; --color-border: #e2e8f0; --color-text: #0f172a; --color-text-muted: #64748b; --color-accent: #f97316; }
     .sidebar { width: 240px; transition: transform 0.2s ease; }
     .sidebar.collapsed { width: 64px; }
     .sidebar.collapsed .nav-label { display: none; }
@@ -89,6 +89,15 @@
       sidebar.classList.toggle('collapsed');
       sidebar.classList.toggle('open');
       overlay.classList.toggle('open');
+    }
+
+    function closeSidebar() {
+      const sidebar = document.querySelector('.sidebar');
+      const overlay = document.querySelector('.sidebar-overlay');
+      if (window.innerWidth < 768) {
+        sidebar.classList.remove('open');
+        overlay.classList.remove('open');
+      }
     }
 
     function toggleTheme() {
