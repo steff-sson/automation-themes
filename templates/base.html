@@ -9,18 +9,20 @@
   <style>
     [data-theme="dark"] { --color-background: #001b2e; --color-surface: #0a2a3f; --color-surface-light: #133a52; --color-border: #1a4a6a; --color-text: #ffefd3; --color-text-muted: #8899aa; --color-accent: #ffc49b; }
     [data-theme="light"] { --color-background: #f8fafc; --color-surface: #ffffff; --color-surface-light: #f1f5f9; --color-border: #e2e8f0; --color-text: #0f172a; --color-text-muted: #64748b; --color-accent: #f97316; }
-    .sidebar { width: 240px; transition: transform 0.2s ease; }
+    .sidebar { width: 240px; transition: transform 0.2s ease; position: fixed; right: 0; top: 0; z-index: 50; transform: translateX(100%); }
+    .sidebar.open { transform: translateX(0); }
     .sidebar.collapsed { width: 64px; }
     .sidebar.collapsed .nav-label { display: none; }
     .sidebar.collapsed .sidebar-header-text { display: none; }
     .sidebar.collapsed .sidebar-footer-text { display: none; }
     .sidebar.collapsed .nav-item { justify-content: center; }
     .sidebar.collapsed .nav-item i { margin-right: 0; }
+    .sidebar-overlay { display: none; }
+    .sidebar-overlay.open { display: block; }
+    @media (min-width: 769px) {
+      .sidebar { position: sticky; transform: translateX(0); }
+    }
     @media (max-width: 768px) {
-      .sidebar { position: fixed; z-index: 50; transform: translateX(-100%); width: 240px !important; }
-      .sidebar.open { transform: translateX(0); }
-      .sidebar-overlay { display: none; }
-      .sidebar-overlay.open { display: block; }
       main { padding-top: 56px !important; }
     }
   </style>
@@ -48,15 +50,20 @@
   <!-- Mobile Overlay -->
   <div class="sidebar-overlay fixed inset-0 bg-black/50 z-40" onclick="toggleSidebar()"></div>
 
-  <!-- Sidebar -->
-  <aside class="sidebar bg-surface border-r border-border flex flex-col shrink-0 h-screen sticky top-0">
+  <!-- Content -->
+  <main class="flex-1 p-6 overflow-y-auto">
+    {% block content %}{% endblock %}
+  </main>
+
+  <!-- Sidebar (rechts) -->
+  <aside class="sidebar bg-surface border-l border-border flex flex-col shrink-0 h-screen">
     <div class="flex items-center justify-between p-4 border-b border-border">
       <div class="flex items-center gap-2">
         <i data-lucide="zap" class="w-5 h-5 text-accent"></i>
         <span class="sidebar-header-text text-sm font-medium">{% block sidebar_header %}automation{% endblock %}</span>
       </div>
       <button onclick="toggleSidebar()" class="text-text-muted hover:text-text p-1 rounded">
-        <i data-lucide="menu" class="w-4 h-4"></i>
+        <i data-lucide="x" class="w-4 h-4"></i>
       </button>
     </div>
     <nav class="flex flex-col gap-1 p-2 flex-1">
@@ -76,11 +83,6 @@
       <div class="text-xs text-text-muted mt-2 sidebar-footer-text">{% block sidebar_footer %}{% endblock %}</div>
     </div>
   </aside>
-
-  <!-- Content -->
-  <main class="flex-1 p-6 overflow-y-auto">
-    {% block content %}{% endblock %}
-  </main>
 
   <script>
     function toggleSidebar() {
