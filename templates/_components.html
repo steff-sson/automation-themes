@@ -12,17 +12,19 @@
 {%- endmacro %}
 
 {%- macro status_badge(status, color=None) %}
+{% set display_status = 'no data' if status == 'unknown' else status %}
 {% set colors = {
   'success': 'bg-green-500/20 text-green-400',
   'error': 'bg-red-500/20 text-red-400',
   'warning': 'bg-yellow-500/20 text-yellow-400',
   'unknown': 'bg-gray-500/20 text-gray-400',
+  'no data': 'bg-gray-500/20 text-gray-400',
   'running': 'bg-blue-500/20 text-blue-400'
 } %}
-{% set color_class = colors[status] if status in colors else (color or 'bg-gray-500/20 text-gray-400') %}
+{% set color_class = colors[display_status] if display_status in colors else (color or 'bg-gray-500/20 text-gray-400') %}
 <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium {{ color_class }}">
-  <span class="w-1.5 h-1.5 rounded-full {% if status == 'success' %}bg-green-400{% elif status == 'error' %}bg-red-400{% elif status == 'warning' %}bg-yellow-400{% elif status == 'running' %}bg-blue-400{% else %}bg-gray-400{% endif %}"></span>
-  {{ status }}
+  <span class="w-1.5 h-1.5 rounded-full {% if display_status == 'success' %}bg-green-400{% elif display_status == 'error' %}bg-red-400{% elif display_status == 'warning' %}bg-yellow-400{% elif display_status == 'running' %}bg-blue-400{% else %}bg-gray-400{% endif %}"></span>
+  {{ display_status }}
 </span>
 {%- endmacro %}
 
