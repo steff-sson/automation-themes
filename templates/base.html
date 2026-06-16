@@ -8,11 +8,11 @@
   <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
   <style>
     .sidebar { width: 200px; }
+    .sidebar-overlay { display: none; }
+    .sidebar-overlay.open { display: block; }
     @media (max-width: 768px) {
       .sidebar { position: fixed; right: 0; top: 0; z-index: 50; transform: translateX(100%); transition: transform 0.2s ease; }
       .sidebar.open { transform: translateX(0); }
-      .sidebar-overlay { display: none; }
-      .sidebar-overlay.open { display: block; }
       main { padding-top: 56px !important; }
     }
   </style>
@@ -32,7 +32,7 @@
   </div>
 
   <!-- Mobile Overlay -->
-  <div class="sidebar-overlay fixed inset-0 bg-black/20 z-40"></div>
+  <div class="sidebar-overlay fixed inset-0 bg-black/20 z-40" onclick="toggleSidebar()"></div>
 
   <!-- Content (centered) -->
   <main class="flex-1 p-6 flex justify-center">
@@ -43,9 +43,14 @@
 
   <!-- Sidebar -->
   <aside class="sidebar bg-surface border-l border-border flex flex-col shrink-0 h-screen sticky top-0">
-    <div class="flex items-center gap-2 p-4 border-b border-border">
-      <i data-lucide="zap" class="w-5 h-5 text-accent"></i>
-      <span class="text-sm font-medium">{% block sidebar_header %}automation{% endblock %}</span>
+    <div class="flex items-center justify-between p-4 border-b border-border">
+      <div class="flex items-center gap-2">
+        <i data-lucide="zap" class="w-5 h-5 text-accent"></i>
+        <span class="text-sm font-medium">{% block sidebar_header %}automation{% endblock %}</span>
+      </div>
+      <button onclick="toggleSidebar()" class="md:hidden text-text-muted hover:text-text p-1 rounded">
+        <i data-lucide="x" class="w-4 h-4"></i>
+      </button>
     </div>
     <nav class="flex flex-col gap-1 p-2 flex-1">
       {% block nav_items %}{% endblock %}
@@ -62,10 +67,8 @@
     }
 
     function closeSidebar() {
-      if (window.innerWidth < 768) {
-        document.querySelector('.sidebar').classList.remove('open');
-        document.querySelector('.sidebar-overlay').classList.remove('open');
-      }
+      document.querySelector('.sidebar').classList.remove('open');
+      document.querySelector('.sidebar-overlay').classList.remove('open');
     }
 
     lucide.createIcons();
